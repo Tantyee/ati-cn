@@ -1,6 +1,6 @@
-# 微步 ThreatBook CTI 中文在线文档项目
+# 微步 ThreatBook ATI 中文在线文档项目
 
-本仓库包含微步 ThreatBook CTI 的中文在线产品文档与 API 接口参考。使用 [Mintlify](https://mintlify.com) 构建与发布。
+本仓库包含微步 ThreatBook ATI 的中文在线产品文档与 API 接口参考。使用 [Mintlify](https://mintlify.com) 构建与发布。
 
 ### 本地预览与开发
 
