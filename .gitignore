@@ -1,0 +1,7 @@
+.idea
+.gemini
+.temp
+start.sh
+.DS_Store
+node_modules
+package-lock.json

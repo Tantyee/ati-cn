@@ -1,0 +1,451 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "URL查询",
+    "description": "获取 URL 扫描引擎检测结果以及下载文件的分析结果。",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/v2/url/query": {
+      "post": {
+        "summary": "URL查询",
+        "deprecated": false,
+        "description": "获取 URL 扫描引擎检测结果以及下载文件的分析结果。",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "apikey",
+            "in": "query",
+            "description": "您的 API Key。关于如何获取和管理 API Key，请参阅 [API 认证说明](https://ati.threatbook.cn/docs/api-reference/authentication) 页面。\n\n**温馨提示：**\n\n在发起调用前，请确认已将发起请求的服务器 IP 地址绑定至 API Key 白名单，并确认账户具备目标 API 的授权额度。",
+            "required": false,
+            "example": "87720c1af3ee4acc947630c31e3c53af6f1bfda4d44f423f9e7c130e91479be8",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "url",
+            "in": "query",
+            "description": "需要扫描查询的 URL 地址。URL 必须进行 URL 编码 (URL Encoding)。",
+            "required": true,
+            "example": "http://bing.com/edgepinning/allowlist",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string"
+                    },
+                    "response_code": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "multiengines": {
+                          "type": "object",
+                          "properties": {},
+                          "description": "**URL 扫描引擎检测结果**  \n包含以下引擎：\n\n- threatbook  \n- threatcrowd.com  \n- squidblacklist.org  \n- osint.bambenekconsulting.com  \n- malwaredomains.com  \n- malwareconfig.com  \n- cymon.io  \n- cybercrime-tracker.net  \n- circl.lu-misp  \n- alienvault.com  \n- AlienVault-OTX  \n- Google Safebrowsing  \n\n**检测结果定义**\n\n- **No Detection**: 显示为安全。  \n- **Detected**: 已检出。  \n  - **malware**: 恶意软件。  \n  - **c2**: 命令与控制。  \n  - **phishing**: 网络钓鱼。  \n  - **suspicious_miningpool**: 公共矿池。  \n  - **suspicious_coinminer**: 私有矿池。  \n  - **compromised**: 已失陷网站。  \n- **Whitelist**: 白名单。  \n  - **whitelist**: 已加白。"
+                        },
+                        "threat_level": {
+                          "type": "string",
+                          "description": "**URL 威胁等级**  \n该字段包含以下类型：\n\n- **malicious**  \n- **suspicious**  \n- **unknown**  \n- **clean**"
+                        },
+                        "sandbox": {
+                          "type": "object",
+                          "properties": {},
+                          "description": "**沙箱分析报告**  \n包含以下字段的 JSON 对象：\n\n- **threat_level**: 威胁等级（`malicious`、`suspicious`、`unknown`、`clean`）。  \n- **submit_time**: 提交时间。  \n- **file_name**: 文件名。  \n- **file_type**: 文件类型。  \n- **sample_sha256**: 文件 SHA256。  \n- **tag**: 文件检测标签。  \n- **sb_status**: 任务状态。  \n- **sandbox_type**: 最近一次成功分析使用的沙箱环境。  \n- **sandbox_type_list**: 样本成功完成分析的全部沙箱环境列表。"
+                        },
+                        "details": {
+                          "type": "object",
+                          "properties": {},
+                          "description": "**HTTP 响应信息**  \n包含以下字段的 JSON 对象：\n\n- **headers**: 响应头。  \n- **lastSeen**: 最后扫描时间。  \n- **ip**: 解析后的 IP 地址。  \n- **historyScan**: 历史下载文件检测结果。  \n- **finalUrl**: 重定向后的最终 URL。  \n- **url**: 原始 URL 地址。  \n- **sha256s**: 历史下载文件的 SHA256 哈希值。  \n- **status**: 状态码。  \n- **httpStatusCode**: HTTP 响应码。"
+                        },
+                        "me_positives": {
+                          "type": "integer",
+                          "description": "多引擎检测中判定该 URL 为恶意的引擎数量。"
+                        },
+                        "me_ratio": {
+                          "type": "string",
+                          "description": " 检出率，以*检出引擎数 / 引擎总数*表示。  \n  - 示例： `\"1/12\"` 表示总计 12 个引擎中有 1 个检出该 URL。"
+                        }
+                      },
+                      "required": [
+                        "sandbox",
+                        "details",
+                        "multiengines",
+                        "me_positives",
+                        "me_ratio",
+                        "threat_level"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "response_code",
+                    "msg"
+                  ]
+                },
+                "example": {
+                  "response_code": 200,
+                  "msg": "Success",
+                  "data": {
+                    "multiengines": {
+                      "threatbook": "whitelist",
+                      "threatcrowd.com": "safe",
+                      "squidblacklist.org": "safe",
+                      "osint.bambenekconsulting.com": "safe",
+                      "malwaredomains.com": "safe",
+                      "malwareconfig.com": "safe",
+                      "cymon.io": "safe",
+                      "cybercrime-tracker.net": "safe",
+                      "circl.lu-misp": "malware",
+                      "alienvault.com": "safe",
+                      "AlienVault-OTX": "safe",
+                      "Google Safebrowsing": "safe"
+                    },
+                    "threat_level": "unknown",
+                    "sandbox": {
+                      "threat_level": "unknown",
+                      "submit_time": "2021-02-04 06:12:03",
+                      "file_name": "allowlist",
+                      "sample_sha256": "c707737d9b33b1c3f97c58c16557fe522d72d2a787fe3904f3e15853bcdc6187",
+                      "sb_status": "OK",
+                      "sandbox_type": "win10_1903_enx64_office2016",
+                      "tag": {
+                        "s": [
+                          "json"
+                        ],
+                        "x": [
+                          "",
+                          ""
+                        ]
+                      },
+                      "sandbox_type_list": [
+                        "win7_sp1_enx86_office2013",
+                        "win7_sp1_enx64_office2013",
+                        "win10_1903_enx64_office2016"
+                      ]
+                    },
+                    "details": {
+                      "headers": {
+                        "X-CDN-TraceID": "0.df2dc017.1758892677.32052bfa",
+                        "X-EventID": "68d6928658de47418e6664d5720929ec",
+                        "Permissions-Policy": "unload=()",
+                        "Connection": "keep-alive",
+                        "P3P": "CP=\"NON UNI COM NAV STA LOC CURa DEVa PSAa PSDa OUR IND\"",
+                        "X-MSEdge-Ref": "Ref A: 03CF8523D6C7499D93664520AC6F5B41 Ref B: TYO201151004060 Ref C: 2025-09-26T13:17:58Z",
+                        "Date": "Fri, 26 Sep 2025 13:17:58 GMT",
+                        "UserAgentReductionOptOut": "A7kgTC5xdZ2WIVGZEfb1hUoNuvjzOZX3VIV/BA6C18kQOOF50Q0D3oWoAm49k3BQImkujKILc7JmPysWk3CSjwUAAACMeyJvcmlnaW4iOiJodHRwczovL3d3dy5iaW5nLmNvbTo0NDMiLCJmZWF0dXJlIjoiU2VuZEZ1bGxVc2VyQWdlbnRBZnRlclJlZHVjdGlvbiIsImV4cGlyeSI6MTY4NDg4NjM5OSwiaXNTdWJkb21haW4iOnRydWUsImlzVGhpcmRQYXJ0eSI6dHJ1ZX0=",
+                        "Cache-Control": "public, max-age=3600",
+                        "ETag": "DpuVz2peupDazmhHdjK3mg==",
+                        "Report-To": "{\"group\":\"csp-endpoint\",\"max_age\":86400,\"endpoints\":[{\"url\":\"https://aefd.nelreports.net/api/report?cat=bingcsp\"}]}",
+                        "Content-Security-Policy": "script-src https: 'strict-dynamic' 'report-sample' 'wasm-unsafe-eval' 'nonce-g64bSCNlxMpRWgFmG+SaCfJW+j9m5j1IfL0M6CaWuVU='; base-uri 'self';report-to csp-endpoint",
+                        "Vary": "Accept-Encoding",
+                        "Accept-CH": "Sec-CH-UA-Arch, Sec-CH-UA-Bitness, Sec-CH-UA-Full-Version, Sec-CH-UA-Full-Version-List, Sec-CH-UA-Mobile, Sec-CH-UA-Model, Sec-CH-UA-Platform, Sec-CH-UA-Platform-Version",
+                        "Content-Type": "application/json"
+                      },
+                      "lastSeen": "2025-09-26 05:17:57",
+                      "ip": "150.171.27.10",
+                      "finalUrl": "http://www.bing.com/edgepinning/allowlist",
+                      "url": "http://bing.com/edgepinning/allowlist",
+                      "sha256s": [
+                        "c707737d9b33b1c3f97c58c16557fe522d72d2a787fe3904f3e15853bcdc6187"
+                      ],
+                      "status": 3,
+                      "httpStatusCode": 200,
+                      "historyScans": [
+                        {
+                          "fileName": "allowlist",
+                          "sha256": "c707737d9b33b1c3f97c58c16557fe522d72d2a787fe3904f3e15853bcdc6187",
+                          "multiEngines": "0/28",
+                          "fileType": "json"
+                        },
+                        {
+                          "fileName": "allowlist",
+                          "sha256": "c707737d9b33b1c3f97c58c16557fe522d72d2a787fe3904f3e15853bcdc6187",
+                          "multiEngines": "0/28",
+                          "fileType": "json"
+                        },
+                        {
+                          "fileName": "allowlist",
+                          "sha256": "c707737d9b33b1c3f97c58c16557fe522d72d2a787fe3904f3e15853bcdc6187",
+                          "multiEngines": "0/28",
+                          "fileType": "json"
+                        },
+                        {
+                          "fileName": "allowlist",
+                          "sha256": "c707737d9b33b1c3f97c58c16557fe522d72d2a787fe3904f3e15853bcdc6187",
+                          "multiEngines": "0/28",
+                          "fileType": "json"
+                        },
+                        {
+                          "fileName": "allowlist",
+                          "sha256": "c707737d9b33b1c3f97c58c16557fe522d72d2a787fe3904f3e15853bcdc6187",
+                          "multiEngines": "0/28",
+                          "fileType": "json"
+                        }
+                      ]
+                    },
+                    "me_positives": 1,
+                    "me_ratio": "1/12"
+                  }
+                }
+              }
+            },
+            "headers": {}
+          },
+          "202": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "",
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string",
+                      "enum": [
+                        " In Progress"
+                      ]
+                    },
+                    "response_code": {
+                      "type": "integer",
+                      "const": 202
+                    }
+                  },
+                  "required": [
+                    "msg",
+                    "response_code"
+                  ]
+                },
+                "examples": {
+                  "Example 1": {
+                    "summary": "示例 1",
+                    "value": {
+                      "msg": " In Progress",
+                      "response_code": 202
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string",
+                      "enum": [
+                        "Required:{resource/apikey}",
+                        "Invalid parameter:{parameter}"
+                      ]
+                    },
+                    "response_code": {
+                      "type": "integer",
+                      "const": 400
+                    }
+                  },
+                  "required": [
+                    "msg",
+                    "response_code"
+                  ]
+                },
+                "examples": {
+                  "Example 1": {
+                    "summary": "示例 1",
+                    "value": {
+                      "msg": "Required:{resource/apikey}",
+                      "response_code": 400
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string",
+                      "enum": [
+                        "Invalid account status",
+                        "Invalid access IP: {actual IP address}",
+                        "Invalid API key",
+                        "Invalid key status",
+                        "No access to the API",
+                        "Expired API key",
+                        "No access to the requested resource",
+                        "No access to: {parameter}"
+                      ]
+                    },
+                    "response_code": {
+                      "type": "integer",
+                      "const": 401
+                    }
+                  },
+                  "required": [
+                    "msg",
+                    "response_code"
+                  ]
+                },
+                "examples": {
+                  "Example 1": {
+                    "summary": "示例 1",
+                    "value": {
+                      "msg": "Invalid account status",
+                      "response_code": 401
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string",
+                      "const": "Invalid API method"
+                    },
+                    "response_code": {
+                      "type": "integer",
+                      "const": 405
+                    }
+                  },
+                  "required": [
+                    "msg",
+                    "response_code"
+                  ]
+                },
+                "examples": {
+                  "Example 1": {
+                    "summary": "示例 1",
+                    "value": {
+                      "msg": "Invalid API method",
+                      "response_code": 405
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string",
+                      "enum": [
+                        "Request rate limitation",
+                        "Beyond {daily/monthly/total} quotas limitation"
+                      ]
+                    },
+                    "response_code": {
+                      "type": "integer",
+                      "const": 429
+                    }
+                  },
+                  "required": [
+                    "msg",
+                    "response_code"
+                  ]
+                },
+                "examples": {
+                  "Example 1": {
+                    "summary": "示例 1",
+                    "value": {
+                      "msg": "Request rate limitation",
+                      "response_code": 429
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string",
+                      "enum": [
+                        "System error",
+                        "URL Download Fail"
+                      ]
+                    },
+                    "response_code": {
+                      "type": "integer",
+                      "const": 500
+                    }
+                  },
+                  "required": [
+                    "msg",
+                    "response_code"
+                  ]
+                },
+                "examples": {
+                  "Example 1": {
+                    "summary": "示例 1",
+                    "value": {
+                      "msg": "System error",
+                      "response_code": 500
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    }
+  },
+  "components": {
+    "schemas": {},
+    "securitySchemes": {
+      "feeds": {
+        "bearerFormat": "JWT",
+        "description": "请输入您的 JWT 令牌。您可以调用 /login 接口获取该令牌。",
+        "type": "http",
+        "scheme": "bearer"
+      },
+      "bearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://openapi.threatbook.cn"
+    }
+  ]
+}

@@ -1,72 +1,107 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mintlify Starter Kit",
+  "name": "ThreatBook CTI 产品文档",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
+    "primary": "#CC0000",
+    "light": "#eb2d17",
     "dark": "#15803D"
   },
-  "favicon": "/favicon.svg",
-  "navigation": {
-    "pages": [
-      {
-        "group": "Getting Started",
-        "pages": [
-          "index",
-          "quickstart"
-        ]
-      }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
-        }
-      ]
+  "api": {
+    "params": {
+      "expanded": "all"
+    },
+    "playground": {
+      "display": "interactive",
+      "proxy": false,
+      "baseUrl": "https://openapi.threatbook.cn"
     }
   },
+  "favicon": "/favicon.ico",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "API文档",
+        "groups": [
+          {
+            "group": "快速开始",
+            "pages": [
+              "api-reference/authentication"
+            ]
+          },
+          {
+            "group": "指标类威胁情报",
+            "pages": [
+              "api-reference/enrichment/compromise-detection-v1",
+              "api-reference/enrichment/ip-intelligence-v2",
+              "api-reference/enrichment/domain-intelligence-v2",
+              "api-reference/enrichment/file-intelligence-v2",
+              "api-reference/enrichment/file-upload-v2",
+              "api-reference/enrichment/url-intelligence-v2",
+              {
+                "group": "已废弃",
+                "pages": [
+                  "api-reference/enrichment/ip-intelligence-v1",
+                  "api-reference/enrichment/domain-intelligence-v1"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "漏洞情报",
+            "pages": [
+              "api-reference/vulnerabilities/vulnerability-intelligence-v2"
+            ]
+          },
+          {
+            "group": "威胁态势报告",
+            "pages": [
+              "api-reference/reports/report-list-v3",
+              "api-reference/reports/report-detail",
+              {
+                "group": "已废弃",
+                "pages": [
+                  "api-reference/reports/report-list-v2"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "第三方集成",
+            "pages": [
+              "api-reference/integration/splunk-app-api"
+            ]
+          },
+          {
+            "group": "知识库",
+            "pages": [
+              "api-reference/threat-labels",
+              "api-reference/reports-glossaries"
+            ]
+          }
+        ]
+      }
+    ]
+  },
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "light": "/logo/logo_light.svg",
+    "dark": "/logo/logo_dark.svg",
+    "href": "https://ati.threatbook.cn/docs"
   },
   "navbar": {
     "links": [
       {
-        "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "label": "登录 ATI",
+        "href": "https://ati.threatbook.cn/"
       }
     ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
-      "href": "https://app.mintlify.com"
+      "label": "联系我们",
+      "href": "https://www.threatbook.com/about/contact"
     }
-  },
-  "contextual": {
-    "options": [
-      "copy",
-      "view",
-      "chatgpt",
-      "claude",
-      "perplexity",
-      "mcp",
-      "cursor",
-      "vscode"
-    ]
   },
   "footer": {
-    "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
-    }
+    "socials": {}
   }
 }

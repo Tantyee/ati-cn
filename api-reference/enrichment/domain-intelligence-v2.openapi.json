@@ -1,0 +1,518 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "域名分析",
+    "description": "域名分析 (V2) API 提供详细的威胁情报研判结果，包括来自微步实验室 (ThreatBook Lab) 的威胁研判与标签，以及关联的 DNS 解析、WHOIS 和上下文数据。",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/v2/domain/query": {
+      "post": {
+        "summary": "域名分析",
+        "deprecated": false,
+        "description": "域名分析 (V2) API 提供详细的威胁研判结果，包含微步实验室 (ThreatBook Lab) 产出的威胁判定与标签，以及关联的 DNS 解析、WHOIS 和上下文数据。",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "apikey",
+            "in": "query",
+            "description": "您的 API Key。关于如何获取和管理 API Key，请参阅 [API 认证说明](https://ati.threatbook.cn/docs/api-reference/authentication) 页面。\n\n**温馨提示：**\n\n在发起调用前，请确认已将发起请求的服务器 IP 地址绑定至 API Key 白名单，并确认账户具备目标 API 的授权额度。",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "resource",
+            "in": "query",
+            "description": "需要查询的单条域名。",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "exclude",
+            "in": "query",
+            "description": "根据实际使用场景，可以在响应中排除以下参数。指定多个参数时，请使用英文逗号分隔（注意：请勿包含空格）：\n\n- **pdns**: 域名的解析 IP 地址信息\n- **whois**: 域名的当前 WHOIS 信息\n- **ssl_certs**: SSL 证书及相关信息\n- **intelligences**: 威胁情报数据\n- **threat_types** / **judgments**: 基于威胁情报综合分析得出的威胁类型（两个参数均有效）\n- **intel_labels** / **tags_classes**: 与攻击团伙或安全事件相关的标签（两个参数均有效）\n- **samples**: 关联样本\n- **categories**: 域名分类数据\n- **sub_domains_count**: 子域名数量\n- **pdns_count**: 当前解析 IP 数量\n\n若未指定该参数，默认将返回所有数据模块。",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string"
+                    },
+                    "response_code": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "threat_types": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "description": "综合研判确定的威胁类型列表。详细定义请参阅 [**威胁标签指南**](https://ati.threatbook.cn/docs/api-reference/threat-labels)。"
+                        },
+                        "verdict": {
+                          "type": "string",
+                          "description": "域名的综合研判结论，包括：malicious（恶意）/ suspicious（可疑）/ unknown（未知）/ benign（无威胁）。"
+                        },
+                        "intel_lables": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "description": "关联的威胁标签，包括攻击团伙、恶意软件家族或安全事件信息。\n\n本字段为 JSON 数组，每个项包含以下属性：\n- **label_type**: 标签分类，如 \"industry\"（行业）、\"gangs\"（团伙）、\"virus_family\"（病毒家族）等。\n- **lables**: 具体的攻击团伙或安全事件标签，例如：APT、OceanLotus 等。"
+                        },
+                        "intelligences": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {}
+                          },
+                          "description": "详细的威胁情报数组。每个项包含以下字段：\n- **find_time**: 发现时间。\n- **update_time**: 最新更新时间。\n- **confidence**: 置信度分数。\n- **expired**: 布尔值。`false` 表示情报仍然有效；`true` 表示情报已过期。\n- **intel_types**: 威胁类型数组，定义请参阅 [**威胁标签指南**](https://ati.threatbook.cn/docs/api-reference/threat-labels)。\n- **intel_labels**: 该情报的标签信息（团伙/事件）。"
+                        },
+                        "samples": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {}
+                          },
+                          "description": "关联的文件样本，最多返回 20 条记录。\n\n每个项包含以下属性：\n- **sha256**: 文件 SHA256 哈希值\n- **scan_time**: 检出时间\n- **ratio**: 杀毒引擎标记为恶意的比例\n- **malware_type**: 恶意软件类型\n- **malware_family**: 恶意软件家族"
+                        },
+                        "pdns": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {}
+                          },
+                          "description": "域名的解析 IP 信息。为 JSON 数组，每个项为包含以下字段的对象：\n- **ip**: 当前解析的 IP 地址\n- **carrier**: 运营商 / ISP\n- **location**: IP 的地理位置信息对象：\n  - **country**: 国家名称\n  - **country_code**: 国家代码\n  - **province**: 省份/州\n  - **city**: 城市\n  - **lng**: 经度\n  - **lat**: 纬度"
+                        },
+                        "whois": {
+                          "type": "object",
+                          "properties": {},
+                          "description": "域名的当前 WHOIS 信息对象，包含以下字段：\n- **registrar_name**: 域名注册商\n- **name_server**: 域名 DNS 服务器列表（使用 `|` 分隔）\n- **registrant_name**: 注册人姓名\n- **registrant_email**: 注册人电子邮箱\n- **registrant_company**: 注册人公司/组织\n- **registrant_address**: 注册人地址\n- **registrant_phone**: 注册人电话号码\n- **cdate**: 注册日期\n- **udate**: 最新更新日期\n- **edate**: 到期日期"
+                        },
+                        "ssl_certs": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {}
+                          },
+                          "description": "域名关联的 SSL 证书及相关信息。"
+                        },
+                        "umbrella_rank": {
+                          "type": "object",
+                          "properties": {},
+                          "description": "域名的 Umbrella 排名信息对象：\n- **global_rank**: 当前 Alexa 全球排名（整数）。仅统计前 1,000,000 名，超过则返回 -1。"
+                        },
+                        "categories": {
+                          "type": "object",
+                          "properties": {},
+                          "description": "域名分类数据对象：\n- **first_level**: 一级分类（数组）\n- **second_level**: 二级分类（字符串）"
+                        },
+                        "sub_domains_count": {
+                          "type": "string",
+                          "description": "子域名总数。小于 1000 显示精确数量，大于 1000 显示 1000+。"
+                        },
+                        "pdns_count": {
+                          "type": "string",
+                          "description": "当前解析 IP 数量。小于 1000 显示精确数量，大于 1000 显示 1000+。"
+                        },
+                        "update_time": {
+                          "type": "string",
+                          "description": "情报数据的最新更新时间。"
+                        }
+                      },
+                      "required": [
+                        "samples",
+                        "intel_lables",
+                        "threat_types",
+                        "intelligences",
+                        "verdict",
+                        "categories",
+                        "whois",
+                        "pdns",
+                        "ssl_certs",
+                        "umbrella_rank",
+                        "sub_domains_count",
+                        "pdns_count",
+                        "update_time"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "response_code",
+                    "msg"
+                  ]
+                },
+                "example": {
+                  "response_code": 200,
+                  "msg": "Success",
+                  "data": {
+                    "threat_types": [
+                      "Whitelist"
+                    ],
+                    "verdict": "benign",
+                    "intel_labels": [],
+                    "intelligences": [
+                      {
+                        "confidence": 100,
+                        "expired": false,
+                        "find_time": "2021-10-31 15:12:25",
+                        "intel_types": [
+                          "Whitelist"
+                        ],
+                        "intel_labels": [],
+                        "update_time": "2025-10-16 15:04:36"
+                      }
+                    ],
+                    "samples": [
+                      {
+                        "sha256": "fea6767de2bdc2ffe0eb2c18a767d726130566d03008e5cc96bd65b2b792e1af",
+                        "ratio": "1/28",
+                        "scan_time": "2025-08-25 10:57:41",
+                        "malware_type": "Susware",
+                        "malware_family": "CompileTime"
+                      },
+                      {
+                        "sha256": "fc50c3ddfc38631382112999c6c9eddfc0325a369a65c8fa8b294bf664e7bbc0",
+                        "ratio": "0/28",
+                        "scan_time": "2024-11-05 07:29:11",
+                        "malware_type": "",
+                        "malware_family": ""
+                      },
+                      {
+                        "sha256": "5e0aeeb71c21bbe08754709f3a99c51f01cdd53cd163bb61bcad4fe51520b99c",
+                        "ratio": "0/28",
+                        "scan_time": "2024-10-22 09:51:22",
+                        "malware_type": "",
+                        "malware_family": ""
+                      }
+                    ],
+                    "pdns": [
+                      {
+                        "ip": "57.144.186.141",
+                        "carrier": "Facebook, Inc.",
+                        "location": {
+                          "country": "Singapore",
+                          "province": "Singapore",
+                          "city": "Singapore",
+                          "lng": "103.853519",
+                          "lat": "1.286529",
+                          "country_code": "SG"
+                        }
+                      },
+                      {
+                        "ip": "2a03:2880:f00c:20d:face:b00c:0:2",
+                        "carrier": "Facebook, Inc.",
+                        "location": {
+                          "country": "Ireland",
+                          "province": "Dublin",
+                          "city": "Dublin",
+                          "lng": "-6.260246",
+                          "lat": "53.349764",
+                          "country_code": "IE"
+                        }
+                      }
+                    ],
+                    "whois": {
+                      "cdate": "1991-01-20 21:00:00",
+                      "edate": "2034-01-21 21:00:00",
+                      "udate": "2025-01-22 08:09:14",
+                      "alexa": "",
+                      "registrar_name": "RegistrarSafe, LLC",
+                      "name_server": "D.NS.FACEBOOK.COM|A.NS.FACEBOOK.COM|C.NS.FACEBOOK.COM|B.NS.FACEBOOK.COM",
+                      "registrant_name": "Domain Admin",
+                      "registrant_email": "domain@fb.com",
+                      "registrant_company": "Meta Platforms, Inc.",
+                      "registrant_address": "1601 Willow Rd,Menlo Park,CA,US",
+                      "registrant_phone": "+1.6505434800"
+                    },
+                    "ssl_certs": [
+                      {
+                        "subject": "*.meta.com",
+                        "issuer": "DigiCert SHA2 High Assurance Server CA",
+                        "fingerprint": "0a6c23c59117f1af26fbaea710de87cad6e64b57",
+                        "purpose": "SSL client|SSL server|Netscape SSL server|Any Purpose|Any Purpose CA|OCSP helper",
+                        "verify": "SHA256withRSA",
+                        "status": "1",
+                        "revoked": false,
+                        "begin": "2022-05-09",
+                        "end": "2022-08-07",
+                        "status_desc": "Expired",
+                        "serial_number": "b8088ce43dd9d87827e44377cca1f03",
+                        "revoked_time": ""
+                      },
+                      {
+                        "subject": "*.meta.com",
+                        "issuer": "DigiCert SHA2 High Assurance Server CA",
+                        "fingerprint": "13c409b0780dab59e6ad54f1ef45f6fb907ac1df",
+                        "purpose": "SSL client|SSL server|Netscape SSL server|Any Purpose|Any Purpose CA|OCSP helper",
+                        "verify": "SHA256withRSA",
+                        "status": "1",
+                        "revoked": false,
+                        "begin": "2023-09-18",
+                        "end": "2023-12-17",
+                        "status_desc": "Expired",
+                        "serial_number": "1c6436d29f5fc547460b08b3e9b17c8",
+                        "revoked_time": ""
+                      },
+                      {
+                        "subject": "*.meta.com",
+                        "issuer": "DigiCert SHA2 High Assurance Server CA",
+                        "fingerprint": "058f831cae3c09ee9456227de45d03d2c5d51bbc",
+                        "purpose": "SSL client|SSL server|Netscape SSL server|Any Purpose|Any Purpose CA|OCSP helper",
+                        "verify": "SHA256withRSA",
+                        "status": "1",
+                        "revoked": false,
+                        "begin": "2023-10-07",
+                        "end": "2024-01-05",
+                        "status_desc": "Expired",
+                        "serial_number": "6b77fed613e97f91bbb8545ce771269",
+                        "revoked_time": ""
+                      }
+                    ],
+                    "umbrella_rank": {
+                      "global_rank": 11447
+                    },
+                    "categories": {
+                      "first_level": [
+                        "News",
+                        "Tool"
+                      ],
+                      "second_level": "Training and Tools"
+                    },
+                    "sub_domains_count": "1000+",
+                    "pdns_count": "2",
+                    "update_time": "2025-10-22 15:07:02"
+                  }
+                }
+              }
+            },
+            "headers": {}
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string",
+                      "enum": [
+                        "Required:{resource/apikey}",
+                        "Invalid parameter:{parameter}"
+                      ]
+                    },
+                    "response_code": {
+                      "type": "integer",
+                      "const": 400
+                    }
+                  },
+                  "required": [
+                    "msg",
+                    "response_code"
+                  ]
+                },
+                "examples": {
+                  "Example 1": {
+                    "summary": "示例 1",
+                    "value": {
+                      "msg": "Required:{resource/apikey}",
+                      "response_code": 400
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string",
+                      "enum": [
+                        "Invalid account status",
+                        "Invalid access IP: {actual IP address}",
+                        "Invalid API key",
+                        "Invalid key status",
+                        "No access to the API",
+                        "Expired API key",
+                        "No access to the requested resource",
+                        "No access to: {parameter}"
+                      ]
+                    },
+                    "response_code": {
+                      "type": "integer",
+                      "const": 401
+                    }
+                  },
+                  "required": [
+                    "msg",
+                    "response_code"
+                  ]
+                },
+                "examples": {
+                  "Example 1": {
+                    "summary": "示例 1",
+                    "value": {
+                      "msg": "Invalid account status",
+                      "response_code": 401
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string",
+                      "const": "Invalid API method"
+                    },
+                    "response_code": {
+                      "type": "integer",
+                      "const": 405
+                    }
+                  },
+                  "required": [
+                    "msg",
+                    "response_code"
+                  ]
+                },
+                "examples": {
+                  "Example 1": {
+                    "summary": "示例 1",
+                    "value": {
+                      "msg": "Invalid API method",
+                      "response_code": 405
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string",
+                      "enum": [
+                        "Request rate limitation",
+                        "Beyond {daily/monthly/total} quotas limitation"
+                      ]
+                    },
+                    "response_code": {
+                      "type": "integer",
+                      "const": 429
+                    }
+                  },
+                  "required": [
+                    "msg",
+                    "response_code"
+                  ]
+                },
+                "examples": {
+                  "Example 1": {
+                    "summary": "示例 1",
+                    "value": {
+                      "msg": "Request rate limitation",
+                      "response_code": 429
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string",
+                      "enum": [
+                        "System error",
+                        "URL Download Fail"
+                      ]
+                    },
+                    "response_code": {
+                      "type": "integer",
+                      "const": 500
+                    }
+                  },
+                  "required": [
+                    "msg",
+                    "response_code"
+                  ]
+                },
+                "examples": {
+                  "Example 1": {
+                    "summary": "示例 1",
+                    "value": {
+                      "msg": "System error",
+                      "response_code": 500
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    }
+  },
+  "components": {
+    "schemas": {},
+    "securitySchemes": {
+      "feeds": {
+        "bearerFormat": "JWT",
+        "description": "请输入您的 JWT 令牌。您可以调用 /login 接口获取该令牌。",
+        "type": "http",
+        "scheme": "bearer"
+      },
+      "bearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://openapi.threatbook.cn"
+    }
+  ]
+}

@@ -1,0 +1,311 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "失陷检测 (V1)",
+    "description": "本 API 用于检测内部主机请求的出站地址（域名/IP）是否存在恶意行为，并返回对应的威胁情报标签。",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/v1/ioc/query": {
+      "post": {
+        "summary": "失陷检测",
+        "deprecated": false,
+        "description": "本 API 用于检测内部主机请求的出站地址（域名/IP）是否存在恶意行为，并返回对应的威胁情报标签。",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "apikey",
+            "in": "query",
+            "description": "您的 API Key。关于如何获取和管理 API Key，请参阅 [API 认证说明](https://ati.threatbook.cn/docs/api-reference/authentication) 页面。\n\n**温馨提示：**\n\n在发起调用前，请确认已将发起请求的服务器 IP 地址绑定至 API Key 白名单，并确认账户具备目标 API 的授权额度。",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "resource",
+            "in": "query",
+            "description": "待查询的域名、IP 地址或 IP:Port 组合。\n\n支持携带端口查询域名或 IP 地址以获取更精准的情报信息，例如：\n- 待查询域名：\n\n  **googlenew.moy.su**\n\n- 待查询 IPv4 带端口：\n\n  **183.18.2.4:8080**\n  \n- 待查询 IPv6 带端口：\n\n  \\[**2001:0db8:0000:0000:0001:0000:0000:0000**\\]:80",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string",
+                      "const": "Success"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "ips": {
+                          "type": "object",
+                          "properties": {},
+                          "description": "Key 为 IP 地址，Value 为 JSON 对象。每个项包含的完整字段定义如下：\n- **threat_level**: 字符串。威胁等级。\n  - **malicious**: 仅当捕获到与 C2、Sinkhole C2、MiningPool、CoinMiner、Malware 相关的特定活动时，在失陷检测场景下才认定为恶意 (malicious)。\n  - **safe**: 仅从失陷检测视角做出的无威胁判断，并不意味着该 IP 或域名不存在失陷场景之外的其他恶意情报或活动。\n- **confidence_level**: 字符串。置信度等级，分为三个级别：\n  - high (高)\n  - medium (中)\n  - low (低)\n- **judgments**: 数组。情报类型。\n  本接口将 5 种恶意类型定义为**失陷指标 (IOC)**，其他完整情报类型表中的恶意类型将不会在此返回：\n  - C2 (远控服务器)\n  - Sinkhole C2 (接管 C2)\n  - MiningPool (矿池服务)\n  - CoinMiner (暗挖木马)\n  - Malware (恶意软件)\n  \n  此外还会返回中性情报类型，例如 CDN、IDC、DNS 等。\n- **whitelist**: 布尔值。\n  - true: 已加白。\n  - false: 未加白。\n- **APT**: 布尔值。\n  - true: 属于 APT 攻击。\n  - false: 暂无足够证据认定为 APT。\n- **threat_actor**: 数组。关联的攻击团伙/组织。\n- **family**: 数组。关联的病毒或木马家族。\n- **tag_categories**: 数组。每个项的字段如下：\n  - tags_type: 标签类型，例如 \"industry\"（行业）。\n  - tags: 具体标签列表。"
+                        },
+                        "domains": {
+                          "type": "object",
+                          "properties": {},
+                          "description": "Key 为域名，Value 为 JSON 对象。每个项包含的完整字段定义如下：\n- **categories**: 对象。域名分类。\n  - first_cats: 数组。一级分类。\n  - second_cats: 字符串。二级分类。\n  \n其他字段与上述 \"ips\" 描述相同。"
+                        }
+                      },
+                      "required": [
+                        "ips",
+                        "domains"
+                      ]
+                    },
+                    "response_code": {
+                      "type": "integer",
+                      "const": 200
+                    }
+                  },
+                  "required": [
+                    "msg",
+                    "data",
+                    "response_code"
+                  ]
+                },
+                "example": {
+                  "msg": "Success",
+                  "data": {
+                    "ips": {
+                      "183.18.2.4:8080": {
+                        "judgments": [
+                          "Dynamic IP",
+                          "Gateway"
+                        ],
+                        "whitelist": false,
+                        "family": [],
+                        "severity": "info",
+                        "APT": false,
+                        "threat_actor": [],
+                        "tag_categories": [],
+                        "confidence_level": "high",
+                        "threat_level": "safe"
+                      }
+                    }
+                  },
+                  "response_code": 200
+                }
+              }
+            },
+            "headers": {}
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string",
+                      "enum": [
+                        "Required:{resource/apikey}",
+                        "Invalid parameter:{parameter}"
+                      ]
+                    },
+                    "response_code": {
+                      "type": "integer",
+                      "const": 400
+                    }
+                  },
+                  "required": [
+                    "msg",
+                    "response_code"
+                  ]
+                },
+                "examples": {
+                  "Example 1": {
+                    "summary": "示例 1",
+                    "value": {
+                      "msg": "Required:{resource/apikey}",
+                      "response_code": 400
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string",
+                      "enum": [
+                        "Invalid account status",
+                        "Invalid access IP: {actual IP address}",
+                        "Invalid API key",
+                        "Invalid key status",
+                        "No access to the API",
+                        "Expired API key",
+                        "No access to the requested resource",
+                        "No access to: {parameter}"
+                      ]
+                    },
+                    "response_code": {
+                      "type": "integer",
+                      "const": 401
+                    }
+                  },
+                  "required": [
+                    "msg",
+                    "response_code"
+                  ]
+                },
+                "examples": {
+                  "Example 1": {
+                    "summary": "示例 1",
+                    "value": {
+                      "msg": "Invalid account status",
+                      "response_code": 401
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string",
+                      "const": "Invalid API method"
+                    },
+                    "response_code": {
+                      "type": "integer",
+                      "const": 405
+                    }
+                  },
+                  "required": [
+                    "msg",
+                    "response_code"
+                  ]
+                },
+                "examples": {
+                  "Example 1": {
+                    "summary": "示例 1",
+                    "value": {
+                      "msg": "Invalid API method",
+                      "response_code": 405
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string",
+                      "enum": [
+                        "Request rate limitation",
+                        "Beyond {daily/monthly/total} quotas limitation"
+                      ]
+                    },
+                    "response_code": {
+                      "type": "integer",
+                      "const": 429
+                    }
+                  },
+                  "required": [
+                    "msg",
+                    "response_code"
+                  ]
+                },
+                "examples": {
+                  "Example 1": {
+                    "summary": "示例 1",
+                    "value": {
+                      "msg": "Request rate limitation",
+                      "response_code": 429
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string",
+                      "enum": [
+                        "System error",
+                        "URL Download Fail"
+                      ]
+                    },
+                    "response_code": {
+                      "type": "integer",
+                      "const": 500
+                    }
+                  },
+                  "required": [
+                    "msg",
+                    "response_code"
+                  ]
+                },
+                "examples": {
+                  "Example 1": {
+                    "summary": "示例 1",
+                    "value": {
+                      "msg": "System error",
+                      "response_code": 500
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    }
+  },
+  "components": {
+    "schemas": {},
+    "securitySchemes": {
+      "feeds": {
+        "bearerFormat": "JWT",
+        "description": "请输入您的 JWT 令牌。您可以调用 /login 接口获取该令牌。",
+        "type": "http",
+        "scheme": "bearer"
+      },
+      "bearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://openapi.threatbook.cn"
+    }
+  ]
+}

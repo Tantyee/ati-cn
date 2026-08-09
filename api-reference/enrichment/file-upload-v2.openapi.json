@@ -1,0 +1,391 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "文件上传",
+    "description": "针对来自终端、Web/FTP/邮件附件或服务器上的可疑文件，使用 **22 个杀毒扫描引擎** 进行快速检测。系统会根据文件类型自动选择合适的沙箱环境进行动态分析。",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/v2/file/upload": {
+      "post": {
+        "summary": "文件上传",
+        "deprecated": false,
+        "description": "针对办公终端、Web/FTP/邮件附件或服务器上的可疑文件，系统使用 **22 个杀毒扫描引擎** 进行快速检测。根据文件类型，系统自动选择合适的沙箱环境进行动态分析。",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "apikey",
+            "in": "query",
+            "description": "您的 API Key。关于如何获取和管理 API Key，请参阅 [API 认证说明](https://ati.threatbook.cn/docs/api-reference/authentication) 页面。\n\n**温馨提示：**\n\n在发起调用前，请确认已将发起请求的服务器 IP 地址绑定至 API Key 白名单，并确认账户具备目标 API 的授权额度。",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sandbox_type",
+            "in": "query",
+            "description": "**沙箱运行环境**\n用户可指定文件执行的沙箱环境。\n\n可选环境包括：\n\n- **Windows**: \n  - win7_sp1_enx64_office2013\n  - win7_sp1_enx86_office2013\n  - win7_sp1_enx86_office2010\n  - win7_sp1_enx86_office2007\n  - win7_sp1_enx86_office2003\n  - win10_1903_enx64_office2016\n\n- **Linux**: \n  - ubuntu_1704_x64\n  - centos_7_x64\n\n- **Kylin (信创)**: \n  - kylin_desktop_v10",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "run_time",
+            "in": "query",
+            "description": "沙箱运行时间，默认为 **60秒**，可根据需要进行调整，最大支持 **300秒**。",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "待分析文件不得超过 **100 MB**。\n\n- **注意：** 请勿上传超过 100 MB 的文件。\n- **支持的文件类型**包括：  \n  PE 可执行文件（EXE、DLL、COM 等）、Office 文档（DOC、XLS、PPT 等）、PDF、HTML、脚本文件、MSI、SWF、JAR、LNK、ELF，以及多种压缩格式（ZIP、RAR、7Z 等）。\n"
+                  }
+                },
+                "required": [
+                  "file"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "sha256": {
+                          "type": "string",
+                          "description": "**文件哈希**"
+                        },
+                        "permalink": {
+                          "type": "string",
+                          "description": "**ATI 文件详情页面 URL**"
+                        }
+                      },
+                      "required": [
+                        "sha256",
+                        "permalink"
+                      ]
+                    },
+                    "response_code": {
+                      "type": "integer"
+                    },
+                    "msg": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "response_code",
+                    "msg"
+                  ]
+                },
+                "example": {
+                  "data": {
+                    "sha256": "d79c9643d76062f553f76bb20b07da88fdbf5ddf3428ffc0223bb7bf90e36deb",
+                    "permalink": "https://ati.threatbook.io/hash/d79c9643d76062f553f76bb20b07da88fdbf5ddf3428ffc0223bb7bf90e36deb"
+                  },
+                  "response_code": 200,
+                  "msg": "Success"
+                }
+              }
+            },
+            "headers": {}
+          },
+          "202": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "",
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string",
+                      "enum": [
+                        " In Progress"
+                      ]
+                    },
+                    "response_code": {
+                      "type": "integer",
+                      "const": 202
+                    }
+                  },
+                  "required": [
+                    "msg",
+                    "response_code"
+                  ]
+                },
+                "examples": {
+                  "Example 1": {
+                    "summary": "示例 1",
+                    "value": {
+                      "msg": " In Progress",
+                      "response_code": 202
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "206": {
+            "description": "文件上传成功，但由于配额限制，仅完成了部分分析。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "",
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string"
+                    },
+                    "response_code": {
+                      "type": "integer",
+                      "const": 206
+                    }
+                  },
+                  "required": [
+                    "msg",
+                    "response_code"
+                  ]
+                },
+                "examples": {
+                  "Example 1": {
+                    "summary": "示例 1",
+                    "value": {
+                      "msg": "The file was uploaded successfully, but only partial analysis could be completed because of the {rate/daily/monthly/total quota} limitation.",
+                      "response_code": 206
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string",
+                      "enum": [
+                        "Required:{resource/apikey}",
+                        "Invalid parameter:{parameter}"
+                      ]
+                    },
+                    "response_code": {
+                      "type": "integer",
+                      "const": 400
+                    }
+                  },
+                  "required": [
+                    "msg",
+                    "response_code"
+                  ]
+                },
+                "examples": {
+                  "Example 1": {
+                    "summary": "示例 1",
+                    "value": {
+                      "msg": "Required:{resource/apikey}",
+                      "response_code": 400
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string",
+                      "enum": [
+                        "Invalid account status",
+                        "Invalid access IP: {actual IP address}",
+                        "Invalid API key",
+                        "Invalid key status",
+                        "No access to the API",
+                        "Expired API key",
+                        "No access to the requested resource",
+                        "No access to: {parameter}"
+                      ]
+                    },
+                    "response_code": {
+                      "type": "integer",
+                      "const": 401
+                    }
+                  },
+                  "required": [
+                    "msg",
+                    "response_code"
+                  ]
+                },
+                "examples": {
+                  "Example 1": {
+                    "summary": "示例 1",
+                    "value": {
+                      "msg": "Invalid account status",
+                      "response_code": 401
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string",
+                      "const": "Invalid API method"
+                    },
+                    "response_code": {
+                      "type": "integer",
+                      "const": 405
+                    }
+                  },
+                  "required": [
+                    "msg",
+                    "response_code"
+                  ]
+                },
+                "examples": {
+                  "Example 1": {
+                    "summary": "示例 1",
+                    "value": {
+                      "msg": "Invalid API method",
+                      "response_code": 405
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string",
+                      "enum": [
+                        "Request rate limitation",
+                        "Beyond {daily/monthly/total} quotas limitation"
+                      ]
+                    },
+                    "response_code": {
+                      "type": "integer",
+                      "const": 429
+                    }
+                  },
+                  "required": [
+                    "msg",
+                    "response_code"
+                  ]
+                },
+                "examples": {
+                  "Example 1": {
+                    "summary": "示例 1",
+                    "value": {
+                      "msg": "Request rate limitation",
+                      "response_code": 429
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "msg": {
+                      "type": "string",
+                      "enum": [
+                        "System error",
+                        "URL Download Fail"
+                      ]
+                    },
+                    "response_code": {
+                      "type": "integer",
+                      "const": 500
+                    }
+                  },
+                  "required": [
+                    "msg",
+                    "response_code"
+                  ]
+                },
+                "examples": {
+                  "Example 1": {
+                    "summary": "示例 1",
+                    "value": {
+                      "msg": "System error",
+                      "response_code": 500
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    }
+  },
+  "components": {
+    "schemas": {},
+    "securitySchemes": {
+      "feeds": {
+        "bearerFormat": "JWT",
+        "description": "请输入您的 JWT 令牌。您可以调用 /login 接口获取该令牌。",
+        "type": "http",
+        "scheme": "bearer"
+      },
+      "bearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://openapi.threatbook.cn"
+    }
+  ]
+}

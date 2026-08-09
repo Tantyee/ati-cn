@@ -1,0 +1,93 @@
+---
+title: 威胁报告术语字典
+description: ATI 威胁报告属性与查询字段的详细参考指南，包含报告分类、威胁类型、行业分类及国家地区代码。
+---
+
+本页面提供针对 **威胁情报报告** (CTI Reports) 相关的字段与属性列表。支持在 CTI API 查询过滤以及微步控制台中检索报告时进行参考使用。
+
+---
+
+## 报告分类 (`category` / `category_list`)
+
+`category` 与 `category_list` 字段代表威胁情报报告的主分类。
+
+| **分类枚举值** | **说明** |
+| :--- | :--- |
+| **Incident Analysis** | 聚焦于单起具体网络攻击事件的深剖分析报告。 |
+| **Malware Analysis** | 针对特定恶意软件家族或木马类型的技术分析报告。 |
+| **Vulnerability Analysis** | 针对具体安全漏洞的高阶技术原理剖析与缓解处置方案报告。 |
+| **Summary Report** | 宏观威胁情报总结，如安全趋势报告、事件汇总与整体态势报告。 |
+| **Incident Response** | 应急响应过程复盘、处置动作与经验总结报告。 |
+| **Security News** | 通用的网络安全资讯、预警通告及简报。 |
+
+---
+
+## 威胁类型 (`threat_type` / `threat_type_list`)
+
+`threat_type` 与 `threat_type_list` 用于标识报告中所记录的网络威胁性质或攻击者行为特征。
+ 
+* **APT** (高级持续性威胁)
+* **Ransomware** (勒索软件)
+* **Supply Chain Attack** (供应链攻击)
+* **Phishing** (网络钓鱼)
+* **Data Leakage** (数据泄露/外泄)
+* **Data Breach** (数据破防/失窃)
+* **Crypto Mining** (暗挖/加密货币挖掘)
+* **DDoS** (分布式拒绝服务攻击)
+* **Financial Theft** (金融盗窃/资金窃取)
+* **Others** (未被上述大类包含的其他网络威胁类型)
+
+---
+
+## 受害行业分类 (`target_industry` / `target_industry_list`, `industry_of_target_org`, `org_industry`)
+
+行业属性用于将遭受威胁影响的目标实体进行分类。支持的参数与响应字段包括：
+- **目标行业 (`target_industry` / `target_industry_list`)**：威胁报告中提及的目标受害行业。
+- **目标机构行业 (`industry_of_target_org`)**：按受害机构的所属行业进行过滤。
+- **受害机构行业明细 (`target_orgs[].org_industry`)**：展示受影响机构具体行业的响应字段。
+
+报告行业对齐 **STIX 2.1** 行业标准，支持结构化的二级分类体系：
+
+| 一级行业 (Level-1 Industry) | 二级细分行业 (Level-2 Industries) |
+| :--- | :--- |
+| **Agriculture** (农林牧渔) | Farming, Livestock, Agri Supply Chain, AgriTech |
+| **Aerospace** (航空航天) | Aerospace Manufacturing, Satellite Systems, Space Operations |
+| **Automotive** (汽车制造与服务) | Car Manufacturers, Auto Parts, Dealerships, EV & Autonomous Tech |
+| **Chemical** (化工行业) | Chemical Manufacturing, Industrial Chemicals, Specialty Chemicals |
+| **Commercial** (商业服务与贸易) | Corporate Services, B2B Services, Trade & Distribution, Legal Services |
+| **Communications** (新闻与传媒) | News Media, Magazines, Radio / FM, TV & Broadcasting, Digital Media |
+| **Construction** (建筑与基础设施) | Building Construction, Engineering, Infrastructure Construction, Architectural Services |
+| **Defense** (国防与军工) | Defense Contractors, Military Manufacturing, Weapons Systems, Military Electronics |
+| **Education** (教育与科研) | Higher Education, K12 Schools, Online Education, Vocational Training |
+| **Energy** (能源与电力) | Oil & Gas, Electric Power, Renewables, Nuclear Energy |
+| **Entertainment** (文化娱乐) | Streaming, Gaming, Film & TV, Sports Entertainment |
+| **Financial-services** (金融服务) | Banking, Investment Banking, Securities, Payments, Wealth Management, Fintech |
+| **Government** (政府与公共机构) | emergency-services, government-local, government-national, government-public-services, government-regional |
+| **Healthcare** (医疗卫生) | Hospitals, Clinics, Medical Devices, Healthcare Services |
+| **Hospitality-leisure** (酒店与旅游) | Hotels, Restaurants, Tourism, Theme Parks, Resorts |
+| **Infrastructure** (关键基础设施) | dams, nuclear, water |
+| **Insurance** (保险业) | Life Insurance, Property & Casualty, Reinsurance, Insurance Brokers |
+| **Manufacturing** (工业制造) | Industrial Manufacturing, Electronics Manufacturing, Machinery, Precision Manufacturing |
+| **Mining** (采矿与冶炼) | Mineral Extraction, Metal Processing, Mining Operations |
+| **Non-profit** (非营利组织) | NGOs, Foundations |
+| **Pharmaceuticals** (生物医药) | Drug Manufacturing, Biotechnology, Pharma R&D, Pharma Supply Chain |
+| **Retail** (零售与电商) | E-commerce, Supermarkets, Department Stores, Convenience Stores, Consumer Brands |
+| **Technology** (科技与软件) | Software, Hardware, Cloud Computing, Cybersecurity, AI/ML, Semiconductors |
+| **Telecommunications** (电信运营商) | Mobile Operators, ISP/Broadband, Satellite Communications, Network Operators |
+| **Transportation** (交通运输与物流) | Airlines, Railways, Logistics & Freight, Public Transit, Maritime Shipping, Ports |
+| **Utilities** (公用事业) | Electric Utilities, Gas Utilities, Water Utilities, Waste & Sewage |
+| **Web3** (区块链与数字资产) | Crypto Exchanges, Blockchain Infrastructure, Wallets & Custody, DeFi Platforms, NFT / Digital Assets |
+
+---
+
+## 国家与地区代码 (`hq_region_of_target_org` / `target_region_list` / `target_region_code` / `hq_region`)
+
+国家与地区代码需严格遵循 **ISO 3166-1 alpha-2** 二位字母标准。
+
+支持的参数与响应字段包括：
+- **目标地区代码 (`target_region_code` / `target_region_list`)**：按受害实体的国家/地区代码过滤。
+- **受害机构总部地区 (`hq_region_of_target_org`)**：按受害机构总部的国家代码过滤。
+- **机构总部二位码 (`target_orgs[].hq_region`)**：响应中展示的受害机构总部国家代码。
+
+- **标准**：[ISO 3166-1 alpha-2](https://www.iso.org/obp/ui/#search)（例如：`CN` 中国, `US` 美国, `JP` 日本, `GB` 英国, `DE` 德国）。
+- **用途**：用于标定威胁团伙归因来源及目标受害实体的地理分布。

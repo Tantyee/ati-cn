@@ -1,55 +1,26 @@
-# Mintlify Starter Kit
+# 微步 ThreatBook CTI 中文在线文档项目
 
-Use the starter kit to get your docs deployed and ready to customize.
+本仓库包含微步 ThreatBook CTI 的中文在线产品文档与 API 接口参考。使用 [Mintlify](https://mintlify.com) 构建与发布。
 
-Click the green **Use this template** button at the top of this repo to copy the Mintlify starter kit. The starter kit contains examples with
+### 本地预览与开发
 
-- Guide pages
-- Navigation
-- Customizations
-- API reference pages
-- Use of popular components
-
-**[Follow the full quickstart guide](https://starter.mintlify.com/quickstart)**
-
-## AI-assisted writing
-
-Set up your AI coding tool to work with Mintlify:
+1. 安装 [Mintlify CLI](https://www.npmjs.com/package/mintlify)：
 
 ```bash
-npx skills add https://mintlify.com/docs
+npm i -g mintlify
 ```
 
-This command installs Mintlify's documentation skill for your configured AI tools like Claude Code, Cursor, Windsurf, and others. The skill includes component reference, writing standards, and workflow guidance.
+2. 在文档根目录（即 `docs.json` 所在目录）下运行本地开发服务：
 
-See the [AI tools guides](/ai-tools) for tool-specific setup.
-
-## Development
-
-Install the [Mintlify CLI](https://www.npmjs.com/package/mint) to preview your documentation changes locally. To install, use the following command:
-
-```
-npm i -g mint
+```bash
+mintlify dev 
 ```
 
-Run the following command at the root of your documentation, where your `docs.json` is located:
+### 部署与发布
 
-```
-mint dev
-```
+将项目提交并推送至指定的 Git 仓库主分支后，关联的部署系统将自动触发增量更新与生产环境发布。
 
-View your local preview at `http://localhost:3000`.
+#### 常见问题排查
 
-## Publishing changes
-
-Install our GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app) to propagate changes from your repo to your deployment. Changes are deployed to production automatically after pushing to the default branch.
-
-## Need help?
-
-### Troubleshooting
-
-- If your dev environment isn't running: Run `mint update` to ensure you have the most recent version of the CLI.
-- If a page loads as a 404: Make sure you are running in a folder with a valid `docs.json`.
-
-### Resources
-- [Mintlify documentation](https://mintlify.com/docs)
+- 如果 `mintlify dev` 无法正常运行：尝试执行 `mintlify install` 重新安装依赖。
+- 页面加载提示 404：请确保在包含 `docs.json` 的根目录下运行命令。

@@ -1,0 +1,42 @@
+---
+title: Splunk APP - 微步威胁情报集成
+---
+
+# ThreatBook TI for Splunk
+
+**ThreatBook TI for Splunk** 应用无缝集成至您的 Splunk 环境，提供持续、高精度的威胁情报富化能力。通过连接微步 ThreatBook 全球情报 API，安全运维团队直接在 Splunk 工作流中即可实现对恶意 IP、域名、URL 和文件哈希的即时识别、分析与下钻。
+
+## 下载与安装
+
+您可直接从 Splunkbase 官方页面下载该应用：
+**[Splunkbase 上的 ThreatBook TI](https://splunkbase.splunk.com/app/8541)**
+
+## 核心功能特性
+
+### 1. SPL 情报富化命令
+提供自定义 SPL 命令 (`tbti`) 动态查询微步 API，对安全日志进行实时富化，加速告警初筛与事件研判。
+
+<img src="/images/splunkApp/spl_enrichment.png" alt="" style={{margin: '0 auto', maxWidth: '100%'}} />
+
+### 2. 自动化关联匹配 
+无需编写复杂代码，即可配置定期、自动化的索引扫描或 Splunk CIM 数据模型关联匹配。在后台主动排查历史与新兴威胁。
+
+<img src="/images/splunkApp/correlation_tasks.png" alt="" style={{margin: '0 auto', maxWidth: '100%'}} />
+
+### 3. 全景分析仪表盘
+提供开箱即用的分析仪表盘，直观展示企业整体的威胁态势。全面掌握与企业基础设施关联的 IP 行为、恶意软件家族及恶意域名。
+
+<img src="/images/splunkApp/analytics_dashboard.png" alt="" style={{margin: '0 auto', maxWidth: '100%'}} />
+
+### 4. 高效缓存与企业级架构支持
+专为企业级生产环境打造。内置高度可定制的本地 KVStore 缓存机制，加速分析并减少重复 API 调用；同时提供完整的代理支持，完美兼容 Search Head 与 Indexer 集群。
+
+<img src="/images/splunkApp/app_configuration.png" alt="" style={{margin: '0 auto', maxWidth: '100%'}} />
+
+## 快速开始
+
+1. 从 [Splunkbase](https://splunkbase.splunk.com/app/8541) 下载应用。
+2. 部署至您的 Splunk 实例（单机版、Indexer 集群或 Search Head 集群）。
+3. 前往 App 配置界面，输入您的微步 ThreatBook API Key，即可开启情报富化。
+
+*如需更详细的部署操作指南，请参考微步团队提供的完整用户手册。*
