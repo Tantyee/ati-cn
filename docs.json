@@ -37,14 +37,7 @@
               "api-reference/enrichment/domain-intelligence-v2",
               "api-reference/enrichment/file-intelligence-v2",
               "api-reference/enrichment/file-upload-v2",
-              "api-reference/enrichment/url-intelligence-v2",
-              {
-                "group": "已废弃",
-                "pages": [
-                  "api-reference/enrichment/ip-intelligence-v1",
-                  "api-reference/enrichment/domain-intelligence-v1"
-                ]
-              }
+              "api-reference/enrichment/url-intelligence-v2"
             ]
           },
           {
@@ -57,13 +50,7 @@
             "group": "威胁态势报告",
             "pages": [
               "api-reference/reports/report-list-v3",
-              "api-reference/reports/report-detail",
-              {
-                "group": "已废弃",
-                "pages": [
-                  "api-reference/reports/report-list-v2"
-                ]
-              }
+              "api-reference/reports/report-detail"
             ]
           },
           {
