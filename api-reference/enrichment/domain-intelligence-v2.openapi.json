@@ -1,16 +1,16 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "域名分析",
-    "description": "域名分析 (V2) API 提供详细的威胁情报研判结果，包括来自微步实验室 (ThreatBook Lab) 的威胁研判与标签，以及关联的 DNS 解析、WHOIS 和上下文数据。",
+    "title": "域名情报",
+    "description": "域名情报 (V2) API 提供详细的威胁情报研判结果，包括来自微步实验室 (ThreatBook Lab) 的威胁研判与标签，以及关联的 DNS 解析、WHOIS 和上下文数据。",
     "version": "1.0.0"
   },
   "paths": {
     "/v2/domain/query": {
       "post": {
-        "summary": "域名分析",
+        "summary": "域名情报",
         "deprecated": false,
-        "description": "域名分析 (V2) API 提供详细的威胁研判结果，包含微步实验室 (ThreatBook Lab) 产出的威胁判定与标签，以及关联的 DNS 解析、WHOIS 和上下文数据。",
+        "description": "域名情报 (V2) API 提供详细的威胁研判结果，包含微步实验室 (ThreatBook Lab) 产出的威胁判定与标签，以及关联的 DNS 解析、WHOIS 和上下文数据。",
         "tags": [],
         "parameters": [
           {

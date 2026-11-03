@@ -1,16 +1,16 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "IP分析",
-    "description": "IP 分析 (V2) API 提供针对**入站 (inbound)** 与 **出站 (outbound)** IP 地址的详细威胁情报。包含来自**微步实验室 (ThreatBook Lab)** 的威胁研判与标签，以及关联的网络资产和上下文数据。",
+    "title": "IP情报",
+    "description": "IP情报 (V2) API 提供针对**入站 (inbound)** 与 **出站 (outbound)** IP 地址的详细威胁情报。包含来自**微步实验室 (ThreatBook Lab)** 的威胁研判与标签，以及关联的网络资产和上下文数据。",
     "version": "1.0.0"
   },
   "paths": {
     "/v2/ip/query": {
       "post": {
-        "summary": "IP分析",
+        "summary": "IP情报",
         "deprecated": false,
-        "description": "IP 分析 (V2) API 提供针对**入站 (inbound)** 与 **出站 (outbound)** IP 地址的详细威胁情报。包含来自**微步实验室 (ThreatBook Lab)** 的威胁研判与标签，以及关联的网络资产和上下文数据。",
+        "description": "IP情报 (V2) API 提供针对**入站 (inbound)** 与 **出站 (outbound)** IP 地址的详细威胁情报。包含来自**微步实验室 (ThreatBook Lab)** 的威胁研判与标签，以及关联的网络资产和上下文数据。",
         "tags": [],
         "parameters": [
           {
