@@ -28,7 +28,7 @@
             "in": "query",
             "description": "您的 API Key。关于如何获取和管理 API Key，请参阅 [API 认证说明](https://ati.threatbook.cn/docs/api-reference/authentication) 页面。\n\n**温馨提示：**\n\n在发起调用前，请确认已将发起请求的服务器 IP 地址绑定至 API Key 白名单，并确认账户具备目标 API 的授权额度。",
             "required": true,
-            "example": "c7a7dcdce9a44ee5b749b5c6201b47ee6281af26f6ac4afcb1d8067901cf79b3",
+            "example": "",
             "schema": {
               "type": "string"
             }
