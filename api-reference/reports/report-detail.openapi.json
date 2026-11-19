@@ -325,13 +325,13 @@
                               "cve_id": {
                                 "type": "string"
                               },
-                              "name": {
+                              "vuln_name": {
                                 "type": "string"
                               }
                             },
                             "required": [
                               "cve_id",
-                              "name"
+                              "vuln_name"
                             ]
                           },
                           "description": "与事件关联的漏洞列表，包括 CVE 标识符和漏洞名称。"
