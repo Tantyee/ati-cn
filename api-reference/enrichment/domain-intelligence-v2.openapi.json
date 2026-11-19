@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "域名情报",
-    "description": "域名情报 (V2) API 提供详细的威胁情报研判结果，包括来自微步实验室 (ThreatBook Lab) 的威胁研判与标签，以及关联的 DNS 解析、WHOIS 和上下文数据。",
+    "description": "域名情报 (V2) API 提供详细的威胁情报研判结果，包括来自微步实验室 (ThreatBook Lab) 的威胁研判与标签，以及关联的 DNS 解析、WHOIS、ICP 备案和上下文数据。",
     "version": "1.0.0"
   },
   "paths": {
@@ -10,7 +10,7 @@
       "post": {
         "summary": "域名情报",
         "deprecated": false,
-        "description": "域名情报 (V2) API 提供详细的威胁研判结果，包含微步实验室 (ThreatBook Lab) 产出的威胁判定与标签，以及关联的 DNS 解析、WHOIS 和上下文数据。",
+        "description": "域名情报 (V2) API 提供详细的威胁研判结果，包含微步实验室 (ThreatBook Lab) 产出的威胁判定与标签，以及关联的 DNS 解析、WHOIS、ICP 备案和上下文数据。",
         "tags": [],
         "parameters": [
           {
@@ -107,6 +107,11 @@
                           "properties": {},
                           "description": "域名的当前 WHOIS 信息对象，包含以下字段：\n- **registrar_name**: 域名注册商\n- **name_server**: 域名 DNS 服务器列表（使用 `|` 分隔）\n- **registrant_name**: 注册人姓名\n- **registrant_email**: 注册人电子邮箱\n- **registrant_company**: 注册人公司/组织\n- **registrant_address**: 注册人地址\n- **registrant_phone**: 注册人电话号码\n- **cdate**: 注册日期\n- **udate**: 最新更新日期\n- **edate**: 到期日期"
                         },
+                        "icp_beian": {
+                          "type": "string",
+                          "description": "域名的 ICP 备案信息，返回备案主体的公司名称，例如“示例科技有限公司”。无备案信息时返回空字符串。",
+                          "example": "示例科技有限公司"
+                        },
                         "ssl_certs": {
                           "type": "array",
                           "items": {
@@ -150,6 +155,7 @@
                         "verdict",
                         "categories",
                         "whois",
+                        "icp_beian",
                         "pdns",
                         "ssl_certs",
                         "umbrella_rank",
@@ -251,6 +257,7 @@
                       "registrant_address": "1601 Willow Rd,Menlo Park,CA,US",
                       "registrant_phone": "+1.6505434800"
                     },
+                    "icp_beian": "",
                     "ssl_certs": [
                       {
                         "subject": "*.meta.com",
